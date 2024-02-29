@@ -13,7 +13,7 @@ void print_usage() {
 
 void print_memory_map(int pid) {
     char command[MAX_LINE_LENGTH];
-    sprintf(command, "cat /proc/%d/maps", pid);
+    sprintf(command, "cat /sys/kernel/debug/%d/maps", pid);
 
     FILE *fp = popen(command, "r");
     if (fp == NULL) {
