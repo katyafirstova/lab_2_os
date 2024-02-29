@@ -31,7 +31,7 @@ static ssize_t pmap_info_read(struct file *filp, char __user *buf, size_t count,
     }
 
     len += snprintf(NULL, 0, "Memory map for PID %d:\n", task->pid);
-    len += snprintf(NULL, 0, "Start Address\tEnd Address\tPermissions\tOffset\t\tDevice\t\t\tInode\t\t\tPath\n");
+    len += snprintf(NULL, 0, "Address\tPermissions\tOffset\t\tDevice\t\t\tInode\t\t\tPath\n");
 
     info = kmalloc(len + 1, GFP_KERNEL);
     if (!info) {
@@ -39,7 +39,7 @@ static ssize_t pmap_info_read(struct file *filp, char __user *buf, size_t count,
     return -ENOMEM;
 
     snprintf(info, len + 1, "Memory map for PID %d:\n", task->pid);
-    snprintf(info + strlen(info), len + 1 - strlen(info), "Start Address\tEnd Address\tPermissions\tOffset\t\tDevice\t\t\tInode\t\t\tPath\n");
+    snprintf(info + strlen(info), len + 1 - strlen(info), "Address\tPermissions\tOffset\t\tDevice\t\t\tInode\t\t\tPath\n");
 
     printk(KERN_INFO "%s", info);
 
