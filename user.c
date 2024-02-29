@@ -8,16 +8,13 @@ void print_usage() {
     printf("Usage: pmap_analog <PID>\n");
 }
 
-
-/* формируем команду для чтения карты памяти процесса */
-
 void print_memory_map(int pid) {
     char command[MAX_LINE_LENGTH];
-    sprintf(command, "cat /sys/kernel/debug/%d/maps", pid);
+    sprintf(command, "/sys/kernel/debug/%d/maps/pmap_info", pid);
 
-    FILE *fp = popen(command, "r");
+    FILE *fp = fopen(command, "r");
     if (fp == NULL) {
-        printf("Error: Failed to execute command.\n");
+        printf("Error: Failed to open debugfs file.\n");
         return;
     }
 
@@ -27,7 +24,7 @@ void print_memory_map(int pid) {
         printf("%s", line);
     }
 
-    pclose(fp);
+    fclose(fp);
 }
 
 int main(int argc, char *argv[]) {
