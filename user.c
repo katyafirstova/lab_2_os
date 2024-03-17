@@ -1,45 +1,31 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
-#define MAX_LINE_LENGTH 1024
+#define BUFFER_SIZE 1024
 
-void print_usage() {
-    printf("Usage: pmap_analog <PID>\n");
-}
 
-void print_memory_map(int pid) {
-    char command[MAX_LINE_LENGTH];
-    sprintf(command, "/sys/kernel/debug/%d/maps/pmap_info", pid);
-
-    FILE *fp = fopen(command, "r");
-    if (fp == NULL) {
-        printf("Error: Failed to open debugfs file.\n");
-        return;
-    }
-
-    printf("Memory map for PID %d:\n", pid);
-    char line[MAX_LINE_LENGTH];
-    while (fgets(line, MAX_LINE_LENGTH, fp) != NULL) {
-        printf("%s", line);
-    }
-
-    fclose(fp);
-}
-
+/* пользовательский код -- ввод PID процесса, который передаем в файл
+ * читаем вывод информации о карте памяти процесса из этого pmap_info и выводим пользователю */
 int main(int argc, char *argv[]) {
-    if (argc != 2) {
-        print_usage();
-        return 1;
+    int pid;
+    FILE *file = fopen("/sys/kernel/debug/pmap_debugfs/pmap_info", "r+");
+    if (file == NULL) {
+        printf("Error while opeining file\n");
+        return 0;
     }
-
-    int pid = atoi(argv[1]);
-    if (pid <= 0) {
-        printf("Error: Invalid PID.\n");
-        return 1;
+    printf("Enter pid to send\n");
+    if (sscanf(argv[1], "%d", &pid)) {
+        char *buffer[BUFFER_SIZE];
+        fprintf(file, "pid: %d", pid);
+        while (!feof(file)) {
+            char *result = fgets(buffer, BUFFER_SIZE, file);
+            printf(result);
+        }
+    } else {
+        printf("Something went wrong");
     }
-
-    print_memory_map(pid);
-
+    fclose(file);
     return 0;
 }
